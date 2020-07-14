@@ -1,0 +1,129 @@
+:root{
+    --squarebg: #14b1fa;
+    --squareborder: rgb(12, 132, 136);
+    --linebg: #0f0;
+    --lineborder: rgb(40, 151, 40);
+    --lrightbg:rgb(255, 196, 0);
+    --lrightborder:rgb(189, 130, 21);
+    --lleftbg:rgb(86, 96, 235);
+    --lleftborder:rgb(49, 49, 161);
+    --zigleftbg:rgb(253, 52, 52);
+    --zigleftborder:rgb(161, 43, 43);
+    --zigrightbg:rgb(253, 253, 33);
+    --zigrightborder:rgb(184, 184, 46);
+    --crownbg:rgb(252, 99, 125);
+    --crownborder:rgb(190, 78, 97);
+}
+/* html,body{
+    margin: 0;
+    padding:0;
+} */
+body{
+    position: relative;
+}
+.block{
+    height:30px;
+    width:30px;
+    box-sizing: border-box;
+    border: 1px solid red;
+}
+.square, .line, .lright, .lleft, .zigleft, .zigright, .crown{
+    position: absolute;
+}
+.square{
+    display: grid;
+    grid-template-columns: repeat(2,30px);
+}
+.square .block{
+    background-color: var(--squarebg);
+    border:3px double var(--squareborder);
+}
+.line{
+    display: inline-block;
+}
+.line .block{
+    background-color: var(--linebg);
+    border:3px double var(--lineborder);
+}
+.lright{
+    display: grid;
+    grid-template-columns: repeat(3,30px);
+    transform: rotate(0deg);
+}
+.lright .block{
+    background-color: var(--lrightbg);
+    border: 3px double var(--lrightborder);
+}
+.lleft{
+    display: grid;
+    grid-template-rows: repeat(2,30px);
+}
+
+.lleft div:nth-child(n+1){
+    grid-row: 2;
+}
+.lleft div:first-child{
+    grid-row: 1;
+}
+.lleft .block{
+    background-color: var(--lleftbg);
+    border: 3px double var(--lleftborder);
+}
+.zigleft{
+    display: grid;
+    grid-template-columns: repeat(3,30px);
+    grid-template-rows: repeat(2,30px);
+}
+.zigleft div:nth-child(-n+2){
+    grid-row: 1;
+}
+.zigleft div:first-child{
+    grid-column: 2;
+}
+.zigleft div:nth-child(2){
+    grid-column: 3;
+}
+.zigleft div:nth-child(n+3){
+    grid-row: 2;
+}
+.zigleft .block{
+    background-color: var(--zigleftbg);
+    border: 3px double var(--zigleftborder);
+}
+.zigright{
+    display: grid;
+    grid-template-columns: repeat(3,30px);
+    grid-template-rows: repeat(2,30px);
+}
+.zigright div:nth-child(-n+2){
+    grid-row: 1;
+}
+.zigright div:nth-child(3){
+    grid-column: 2;
+}
+.zigright div:nth-child(4){
+    grid-column: 3;
+}
+.zigright div:nth-child(n+3){
+    grid-row: 2;
+}
+.zigright .block{
+    background-color: var(--zigrightbg);
+    border: 3px double var(--zigrightborder);
+}
+.crown{
+    display: grid;
+    grid-template-columns: repeat(3,30px);
+    grid-template-rows: repeat(2,30px);
+}
+.crown div:first-child{
+    grid-column: 2;
+    grid-row: 1;
+}
+.crown div:nth-child(n+2){
+    grid-row: 2;
+}
+.crown .block{
+    background-color: var(--crownbg);
+    border: 3px double var(--crownborder);
+}
