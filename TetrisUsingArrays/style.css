@@ -2,8 +2,8 @@
     margin: auto;
     width: min-content;
     display: grid;
-    grid-template-columns: repeat(40,1fr);
-    grid-template-rows: repeat(30,1fr);
+    grid-template-columns: repeat(10,1fr);
+    grid-template-rows: repeat(18,1fr);
     border: 1px solid #000000bd;
     box-sizing: border-box;
 }
@@ -12,10 +12,10 @@
     box-sizing: border-box;
 }
 .tileContainer{
-    width:20px;
-    height:20px;
+    width:35px;
+    height:35px;
     text-align: center;
-    line-height: 20px;
+    line-height: 35px;
     color: transparent;
     box-sizing: border-box;
 }

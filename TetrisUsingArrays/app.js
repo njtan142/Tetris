@@ -1,15 +1,16 @@
 var platform = document.querySelector(".platform");
 var tileContainerAll = document.querySelectorAll(".tileContainer");
 var objectValues;
-var platformRows = 30;
-var platformColumns = 40;
+var platformRows = 18;
+var platformColumns = 10;
 var coordinates = {
     x: 0,
     y: 0,
 };
-let time = 1;
+let time = 1000;
 var blockPosition = [0, 0];
-var lineOrientation = 'vertical';
+var currentBlock = '';
+var orientation;
 function randomDrop(){
     let array = ['square','line','lleft','lright','zigleft','zigright','crown'];
     let drop = array[random(array.length)];
@@ -29,7 +30,6 @@ function randomDrop(){
         crownBlockCreate();
     }
 }
-lrightBlockCreate();
 function random(num) {
     return Math.floor(Math.random() * num);
 }
@@ -37,27 +37,28 @@ function revalue() {
     tileContainerAll.forEach(function (box) {
         if (box.innerHTML == 1) {
             box.style.backgroundColor = "yellow";
-            box.style.border = "1px dashed white";
+            box.style.border = "3px double white";
         } else if(box.innerHTML == 2){
             box.style.backgroundColor = "blue";
-            box.style.border = "1px dashed white";
+            box.style.border = "5px solid lightblue";
         }else if(box.innerHTML == 3){
             box.style.backgroundColor = "orange";
-            box.style.border = "1px dashed white";
+            box.style.border = "3px double white";
         }else if(box.innerHTML == 4){
             box.style.backgroundColor = "darkblue";
-            box.style.border = "1px dashed white";
+            box.style.border = "3px double white";
         }else if(box.innerHTML == 5){
             box.style.backgroundColor = "red";
-            box.style.border = "1px dashed white";
+            box.style.border = "3px double white";
         }else if(box.innerHTML == 6){
             box.style.backgroundColor = "green";
-            box.style.border = "1px dashed white";
+            box.style.border = "3px double white";
         }else if(box.innerHTML == 7){
             box.style.backgroundColor = "violet";
-            box.style.border = "1px dashed white";
+            box.style.border = "3px double white";
         }else {
             box.style.backgroundColor = "white";
+            box.style.border = "1px solid white";
         }
     });
 }
@@ -86,6 +87,8 @@ function squareBlockCreate() {
     coordinates.y = 0;
     blockPosition[0] = x;
     blockPosition[1] = 0;
+    currentBlock = 'square';
+    orientation = 0;
     if (
         tileContainerAll[x].innerHTML == 0 &&
         tileContainerAll[x + 1].innerHTML == 0 &&
@@ -101,7 +104,6 @@ function squareBlockCreate() {
         tileContainerAll[x + 1].innerHTML = 1;
         tileContainerAll[x + platformColumns].innerHTML = 1;
         tileContainerAll[x + 1 + platformColumns].innerHTML = 1;
-        console.log("Game Over");
         revalue();
         return false;
     }
@@ -110,7 +112,6 @@ function squareBlockCreate() {
 }
 function moveBlockSquare() {
     time -= 10;
-    console.log(time)
     let interval = setInterval(function () {
         let x = blockPosition[0];
         let y = blockPosition[1];
@@ -143,11 +144,12 @@ randomDrop();
 }
 function lineBlockCreate(){
     let x = Math.floor(Math.random() * (platformColumns));
-    lineOrientation = 'vertical';
     coordinates.x = x;
     coordinates.y = 0;
     blockPosition[0] = x;
     blockPosition[1] = 0;
+    currentBlock = 'line';
+    orientation = 0;
     if(
         tileContainerAll[x].innerHTML == 0 &&
         tileContainerAll[x + platformColumns * 2].innerHTML == 0 &&
@@ -169,12 +171,83 @@ function lineBlockCreate(){
     }
   moveBlockLine();
 }
+function lineBlockChange(){
+    let x = blockPosition[0];
+    let y = blockPosition[1];
+    if(orientation == 0 && x <= platformColumns - 3 && x != 0){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 3) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML = 2;
+        blockPosition[0] = x - 1;
+        blockPosition[1] = y + 1;
+        x = blockPosition[0];
+        y = blockPosition[1];
+        revalue();
+        orientation = 90;
+    }else if(orientation == 0 && x == 0){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 3) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x + 3].innerHTML = 2;
+        blockPosition[0] = x;
+        blockPosition[1] = y + 1;
+        x = blockPosition[0];
+        y = blockPosition[1];
+        revalue();
+        orientation = 90;
+    }else if(x == platformColumns - 1 && orientation == 0){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 3) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x - 2].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x - 3].innerHTML = 2;
+        blockPosition[0] = platformColumns - 4;
+        blockPosition[1] = y + 1;
+        x = blockPosition[0];
+        y = blockPosition[1];
+        revalue();
+        orientation = 90;
+    }else if(x == platformColumns - 2 && orientation == 0){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 3) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x - 2].innerHTML = 2;
+        blockPosition[0] = platformColumns - 4;
+        blockPosition[1] = y + 1;
+        x = blockPosition[0];
+        y = blockPosition[1];
+        revalue();
+        orientation = 90;
+    } else if(orientation == 90){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 2].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 3].innerHTML = 0;
+        tileContainerAll[(y - 1) * platformColumns + x + 1].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 2;
+        tileContainerAll[(y + 2) * platformColumns + x + 1].innerHTML = 2;
+        blockPosition[0] = x + 1;
+        blockPosition[1] = y - 1;
+        x = blockPosition[0];
+        y = blockPosition[1];
+        revalue();
+        orientation = 0;
+    }
+}
 function moveBlockLine(){
     time -= 10;
     let interval = setInterval(function () {
         let x = blockPosition[0];
         let y = blockPosition[1];
-        if (y + 4 != platformRows && lineOrientation == 'vertical') {
+        if (y + 4 != platformRows && orientation == 0) {
             if (tileContainerAll[(y + 4) * platformColumns + x].innerHTML == 0) {
                 tileContainerAll[y * platformColumns + x].innerHTML = 0;
                 tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 2;
@@ -185,11 +258,33 @@ function moveBlockLine(){
                 revalue();
             } else {
                 clearInterval(interval);
-randomDrop();
+                randomDrop();
             }
+        }else if(y + 1 != platformRows && orientation == 90){
+            if( 
+                tileContainerAll[(y + 1) * platformColumns + x].innerHTML == 0 &&
+                tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML == 0 &&
+                tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML == 0 &&
+                tileContainerAll[(y + 1) * platformColumns + x + 3].innerHTML == 0 
+            ){
+                tileContainerAll[y * platformColumns + x].innerHTML = 0;
+                tileContainerAll[y * platformColumns + x + 1].innerHTML = 0;
+                tileContainerAll[y * platformColumns + x + 2].innerHTML = 0;
+                tileContainerAll[y * platformColumns + x + 3].innerHTML = 0;
+                tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 2;
+                tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 2;
+                tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML = 2;
+                tileContainerAll[(y + 1) * platformColumns + x + 3].innerHTML = 2;
+                blockPosition[1] = y + 1;
+                revalue();
+            } else {
+                clearInterval(interval);
+                randomDrop();
+            }
+            
         } else {
             clearInterval(interval);
-randomDrop();
+            randomDrop();
         }
     }, time);
 }
@@ -222,11 +317,13 @@ function moveBlockOne(){
                 revalue();
             } else {
                 clearInterval(interval);
-randomDrop();
+                explosion();
+                oneBlockCreate();
             }
         } else {
             clearInterval(interval);
-randomDrop();
+            explosion();
+            oneBlockCreate();
         }
     }, 1);
 }
@@ -235,7 +332,6 @@ function explosion(){
     tileContainerAll.forEach(box => array.push(box.innerHTML == '' ? 0: parseInt(box.innerHTML)));
     array = array2D(array,platformRows,platformColumns);
     let object = arraytoObject(array);
-
     for(let row in object){
         let counter = 0;
         for(let i = 0; i < object[row].length; i++){
@@ -263,6 +359,7 @@ function lrightBlockCreate(){
     coordinates.y = 0;
     blockPosition[0] = x;
     blockPosition[1] = 0;
+    currentBlock = 'lright';
     if (
         tileContainerAll[x].innerHTML == 0 &&
         tileContainerAll[x + 1].innerHTML == 0 &&
@@ -278,7 +375,6 @@ function lrightBlockCreate(){
         tileContainerAll[x + 1].innerHTML = 3;
         tileContainerAll[x + 1 + platformColumns].innerHTML = 3;
         tileContainerAll[x + 1 + platformColumns * 2].innerHTML = 3;
-        console.log("Game Over");
         revalue();
         return false;
     }
@@ -287,7 +383,6 @@ function lrightBlockCreate(){
 }
 function moveBlockLright() {
     time -= 10;
-    console.log(time)
     let interval = setInterval(function () {
         let x = blockPosition[0];
         let y = blockPosition[1];
@@ -322,6 +417,7 @@ function lleftBlockCreate(){
     coordinates.y = 0;
     blockPosition[0] = x;
     blockPosition[1] = 0;
+    currentBlock = 'lleft';
     if (
         tileContainerAll[x + 1].innerHTML == 0 &&
         tileContainerAll[x].innerHTML == 0 &&
@@ -337,7 +433,6 @@ function lleftBlockCreate(){
         tileContainerAll[x].innerHTML = 4;
         tileContainerAll[x + platformColumns].innerHTML = 4;
         tileContainerAll[x + platformColumns * 2].innerHTML = 4;
-        console.log("Game Over");
         revalue();
         return false;
     }
@@ -346,7 +441,6 @@ function lleftBlockCreate(){
 }
 function moveBlockLleft() {
     time -= 10;
-    console.log(time)
     let interval = setInterval(function () {
         let x = blockPosition[0];
         let y = blockPosition[1];
@@ -379,6 +473,7 @@ function zigleftBlockCreate(){
     coordinates.y = 0;
     blockPosition[0] = x;
     blockPosition[1] = 0;
+    currentBlock = 'zigleft';
     if (
         tileContainerAll[x].innerHTML == 0 &&
         tileContainerAll[x + 1].innerHTML == 0 &&
@@ -395,7 +490,6 @@ function zigleftBlockCreate(){
         tileContainerAll[x + 1].innerHTML = 5;
         tileContainerAll[x + 1 + platformColumns].innerHTML = 5;
         tileContainerAll[x + 2 + platformColumns].innerHTML = 5;
-        console.log("Game Over");
         revalue();
         return false;
     }
@@ -404,7 +498,6 @@ function zigleftBlockCreate(){
 }
 function moveBlockZigleft() {
     time -= 10;
-    console.log(time)
     let interval = setInterval(function () {
         let x = blockPosition[0];
         let y = blockPosition[1];
@@ -439,6 +532,7 @@ function crownBlockCreate(){
     coordinates.y = 0;
     blockPosition[0] = x;
     blockPosition[1] = 0;
+    currentBlock = 'crown';
     if (
         tileContainerAll[x].innerHTML == 0 &&
         tileContainerAll[x + platformColumns].innerHTML == 0 &&
@@ -454,7 +548,6 @@ function crownBlockCreate(){
         tileContainerAll[x + platformColumns].innerHTML = 7;
         tileContainerAll[x + 1 + platformColumns].innerHTML = 7;
         tileContainerAll[x + platformColumns * 2].innerHTML = 7;
-        console.log("Game Over");
         revalue();
         return false;
     }
@@ -463,7 +556,6 @@ function crownBlockCreate(){
 }
 function moveBlockCrown() {
     time -= 10;
-    console.log(time)
     let interval = setInterval(function () {
         let x = blockPosition[0];
         let y = blockPosition[1];
@@ -498,6 +590,7 @@ function zigrightBlockCreate(){
     coordinates.y = 0;
     blockPosition[0] = x;
     blockPosition[1] = 0;
+    currentBlock = 'zigright';
     if (
         tileContainerAll[x].innerHTML == 0 &&
         tileContainerAll[x + 1].innerHTML == 0 &&
@@ -514,7 +607,6 @@ function zigrightBlockCreate(){
         tileContainerAll[x + 1].innerHTML = 6;
         tileContainerAll[x + platformColumns].innerHTML = 6;
         tileContainerAll[x -1 + platformColumns].innerHTML = 6;
-        console.log("Game Over");
         revalue();
         return false;
     }
@@ -523,7 +615,6 @@ function zigrightBlockCreate(){
 }
 function moveBlockZigright() {
     time -= 10;
-    console.log(time)
     let interval = setInterval(function () {
         let x = blockPosition[0];
         let y = blockPosition[1];
@@ -552,3 +643,220 @@ randomDrop();
         }
     }, time);
 }
+window.addEventListener('keydown', function(event){
+    if(event.keyCode == 13){
+        randomDrop();
+    }else if(event.keyCode == 39 || event.keyCode == 68){
+        moveRight();
+    }else if(event.keyCode == 37 || event.keyCode == 65){
+        moveLeft();
+    }else if(event.keyCode == 40){
+    }else if(event.keyCode == 38 || event.keyCode == 87){
+        if(currentBlock == 'line'){
+            lineBlockChange();
+        }
+    }
+})
+function moveRight(){
+    let x = blockPosition[0];
+    let y = blockPosition[1];
+    if(currentBlock == 'line' && x != platformColumns-1 &&
+        tileContainerAll[y * platformColumns + x + 1].innerHTML == 0 &&
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML == 0 &&
+        tileContainerAll[(y + 2) * platformColumns + x + 1].innerHTML == 0 &&
+        tileContainerAll[(y + 3) * platformColumns + x + 1].innerHTML == 0 &&
+        orientation == 0
+    ){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 3) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 1].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 2;
+        tileContainerAll[(y + 2) * platformColumns + x + 1].innerHTML = 2;
+        tileContainerAll[(y + 3) * platformColumns + x + 1].innerHTML = 2;
+        blockPosition[0] = x + 1;
+        revalue();
+    }else if(currentBlock == 'square' && x != platformColumns - 2 &&
+        tileContainerAll[y * platformColumns + x + 2].innerHTML == 0 &&
+        tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML == 0
+    ){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 2].innerHTML = 1;
+        tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML = 1;
+        blockPosition[0] = x + 1;
+        revalue();
+    }else if(currentBlock == 'lright' && x != platformColumns - 2 &&
+       (tileContainerAll[y * platformColumns + x + 2].innerHTML == 0 &&
+        tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML == 0 &&
+        tileContainerAll[(y + 2) * platformColumns + x + 2].innerHTML == 0)
+    ){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 2].innerHTML = 3;
+        tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML = 3;
+        tileContainerAll[(y + 2) * platformColumns + x + 2].innerHTML = 3;
+        blockPosition[0] = x + 1;
+        revalue();
+    }else if(currentBlock == 'lleft' && x != platformColumns -2 && 
+       (tileContainerAll[y * platformColumns + x + 2].innerHTML == 0 && 
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML == 0 && 
+        tileContainerAll[(y + 2) * platformColumns + x + 1].innerHTML == 0)
+    ){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 2].innerHTML = 4;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 4;
+        tileContainerAll[(y + 2) * platformColumns + x + 1].innerHTML = 4;
+        blockPosition[0] = x + 1;
+        revalue();
+    }else if(currentBlock == 'zigleft' && x != platformColumns - 3 && 
+        tileContainerAll[y * platformColumns + x + 2].innerHTML == 0 &&
+        tileContainerAll[(y + 1) * platformColumns + x + 3].innerHTML == 0
+    ){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 2].innerHTML = 5;
+        tileContainerAll[(y + 1) * platformColumns + x + 3].innerHTML = 5;
+        blockPosition[0] = x + 1;
+        revalue();
+    }else if(currentBlock == 'zigright' && x != platformColumns - 2 && 
+        tileContainerAll[y * platformColumns + x + 2].innerHTML == 0 &&
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML == 0
+    ){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 2].innerHTML = 6;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 6;
+        blockPosition[0] = x + 1;
+        revalue();
+    }else if(currentBlock == 'crown' && x != platformColumns -2){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 1].innerHTML = 7;
+        tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML = 7;
+        tileContainerAll[(y + 2) * platformColumns + x + 1].innerHTML = 7;
+        blockPosition[0] = x + 1;
+        revalue();
+    } else if(currentBlock == 'line' && x != platformColumns - 4 && orientation == 90 &&
+        tileContainerAll[y * platformColumns + x + 4].innerHTML == 0
+    ){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x + 4].innerHTML = 2;
+        blockPosition[0] = x + 1;
+        revalue()
+    }
+       
+}
+function moveLeft(){
+    let x = blockPosition[0];
+    let y = blockPosition[1];
+    if(currentBlock == 'square' && x != 0 && 
+        tileContainerAll[y * platformColumns + x - 1].innerHTML == 0 && 
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML == 0
+    ){
+        tileContainerAll[y * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x - 1].innerHTML = 1;
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML = 1;
+        blockPosition[0] = x - 1;
+        revalue();
+    }else if(currentBlock == 'lright' && x != 0 &&
+        tileContainerAll[y * platformColumns + x - 1].innerHTML == 0 &&
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML == 0 &&
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML == 0 
+    ){
+        tileContainerAll[y * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x - 1].innerHTML = 3;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 3;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 3;
+        blockPosition[0] = x - 1;
+        revalue();
+    }else if(currentBlock == 'lleft' && x != 0 && 
+        tileContainerAll[y * platformColumns + x - 1].innerHTML == 0 &&
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML == 0 &&
+        tileContainerAll[(y + 2) * platformColumns + x - 1].innerHTML == 0 
+    ){
+        tileContainerAll[y * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x - 1].innerHTML = 4;
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML = 4;
+        tileContainerAll[(y + 2) * platformColumns + x - 1].innerHTML = 4;
+        blockPosition[0] = x - 1;
+        revalue();
+    }else if(currentBlock == 'zigleft' && x != 0 && 
+        tileContainerAll[y * platformColumns + x - 1].innerHTML == 0 &&
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML == 0
+    ){
+        tileContainerAll[y * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x + 2].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x - 1].innerHTML = 5;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 5;
+        blockPosition[0] = x - 1;
+        revalue();
+    }else if(currentBlock == 'zigright' && x != 1){
+        tileContainerAll[y * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x - 1].innerHTML = 6;
+        tileContainerAll[(y + 1) * platformColumns + x - 2].innerHTML = 6;
+        blockPosition[0] = x - 1;
+        revalue();
+    }else if(currentBlock == 'crown' && x != 0){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x + 1].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x - 1].innerHTML = 7;
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML = 7;
+        tileContainerAll[(y + 2) * platformColumns + x -1].innerHTML = 7;
+        blockPosition[0] = x - 1;
+        revalue();
+    }else if(currentBlock == 'line' && x != 0 && orientation == 90 &&
+        tileContainerAll[y * platformColumns + x - 1].innerHTML == 0
+    ){
+        tileContainerAll[y * platformColumns + x + 3].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x - 1].innerHTML = 2;
+        blockPosition[0] = x - 1;
+        revalue()
+    }else if(currentBlock == 'line' && x != 0 && 
+        tileContainerAll[y * platformColumns + x - 1].innerHTML == 0 &&
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML == 0 &&
+        tileContainerAll[(y + 2) * platformColumns + x - 1].innerHTML == 0 &&
+        tileContainerAll[(y + 3) * platformColumns + x - 1].innerHTML == 0 &&
+        orientation == 0
+    ){
+        tileContainerAll[y * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 1) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[(y + 3) * platformColumns + x].innerHTML = 0;
+        tileContainerAll[y * platformColumns + x - 1].innerHTML = 2;
+        tileContainerAll[(y + 1) * platformColumns + x - 1].innerHTML = 2;
+        tileContainerAll[(y + 2) * platformColumns + x - 1].innerHTML = 2;
+        tileContainerAll[(y + 3) * platformColumns + x - 1].innerHTML = 2;
+        blockPosition[0] = x - 1;
+        revalue();
+    }
+}
+// function moveDown(){
+//     let x = blockPosition[0];
+//     let y = blockPosition[1];
+//     if(currentBlock == 'line' && y + 3 != platformRows){
+//         tileContainerAll[y * platformColumns + x].innerHTML = 0;
+//         tileContainerAll[(y + 4) * platformColumns + x].innerHTML = 2;
+//         blockPosition[1] = y + 1;
+//         revalue();
+//     }else if(currentBlock == 'square' && y + 2 != platformRows){
+//         tileContainerAll[y * platformColumns + x].innerHTML = 0;
+//         tileContainerAll[y * platformColumns + x + 1].innerHTML = 0;
+//         tileContainerAll[(y + 2) * platformColumns + x].innerHTML = 1;
+//         tileContainerAll[(y + 2) * platformColumns + x + 1].innerHTML = 1;
+//         blockPosition[1] = y + 1;
+//         revalue();
+//     }
+// }
