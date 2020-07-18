@@ -16,5 +16,6 @@
     height:35px;
     text-align: center;
     line-height: 35px;
+    color: transparent;
     box-sizing: border-box;
 }
